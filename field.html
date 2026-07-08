@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>จองสนามฟุตบอล Phitsanulok United</title>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Roboto,Tahoma,sans-serif; background:#F3F1F7; color:#26215C; }
+  .wrap { max-width:420px; margin:0 auto; min-height:100vh; background:#fff; }
+  .head { background:#3C3489; padding:16px 20px; color:#fff; }
+  .head h1 { margin:0; font-size:18px; font-weight:600; }
+  .head p { margin:2px 0 0; font-size:12px; color:#CECBF6; }
+  .body { padding:16px 18px 28px; }
+  label { display:block; font-size:13px; color:#5F5E5A; margin:0 0 5px; }
+  select,input,textarea { width:100%; font-size:15px; padding:10px 12px; border:1px solid #D3D1C7;
+         border-radius:8px; background:#fff; color:#26215C; margin:0 0 14px; font-family:inherit; }
+  select:focus,input:focus,textarea:focus { outline:none; border-color:#534AB7; }
+  textarea { min-height:50px; resize:vertical; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn { width:100%; background:#534AB7; color:#fff; border:none; border-radius:8px; padding:12px; font-size:15px; font-weight:600; cursor:pointer; }
+  .btn:active { transform:scale(.99); }
+  .btn.gray { background:#888780; }
+  .btn:disabled { background:#B4B2A9; }
+  .legend { display:flex; gap:14px; margin:0 0 12px; font-size:12px; color:#5F5E5A; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 14px; }
+  .slot { padding:9px 4px; font-size:12px; border-radius:8px; border:1px solid transparent; cursor:pointer; font-family:inherit; text-align:center; }
+  .s-free { background:#E1F5EE; color:#0F6E56; border-color:#9FE1CB; }
+  .s-book { background:#F7C1C1; color:#791F1F; border-color:#F09595; cursor:not-allowed; }
+  .s-sel  { background:#534AB7; color:#fff; border-color:#534AB7; }
+  .sum { background:#EEEDFE; border-radius:8px; padding:11px 14px; margin:0 0 14px; }
+  .sum .t { font-size:13px; color:#534AB7; }
+  .sum .p { font-size:15px; font-weight:600; color:#3C3489; margin-top:5px; }
+  .recap { background:#F1EFE8; border-radius:8px; padding:11px 14px; margin:0 0 16px; font-size:13px; color:#444441; }
+  .recap b { color:#26215C; }
+  .hint { margin:12px 0 0; font-size:12px; color:#888780; text-align:center; }
+  .capnote { font-size:12px; color:#5F5E5A; background:#F1EFE8; border-radius:8px; padding:9px 12px; margin:0 0 12px; text-align:center; line-height:1.55; transition:background .2s; }
+  .capnote a { color:#3C3489; font-weight:600; text-decoration:none; }
+  .capnote.warn { background:#FAEEDA; color:#854F0B; }
+  .capnote.warn a { color:#854F0B; }
+  .err { display:none; background:#FCEBEB; color:#A32D2D; padding:12px; border-radius:8px; margin:0 0 12px; font-size:13px; }
+  .overlay { position:fixed; inset:0; background:rgba(38,33,92,.45); display:none; align-items:center; justify-content:center; padding:18px; z-index:9; }
+  .modal { background:#fff; border-radius:14px; width:100%; max-width:360px; overflow:hidden; }
+  .modal .mh { background:#3C3489; color:#fff; padding:14px 18px; font-size:16px; font-weight:600; }
+  .modal .mb { padding:16px 18px; }
+  .mrow { display:flex; justify-content:space-between; margin:0 0 8px; font-size:14px; }
+  .mrow span:first-child { color:#5F5E5A; }
+  .mrow span:last-child { color:#26215C; font-weight:500; text-align:right; }
+  .money { border-top:0.5px solid #D3D1C7; margin-top:6px; padding-top:10px; }
+  .money .dep span:last-child { color:#3C3489; }
+  .money .rem span:last-child { color:#0F6E56; }
+  .mbtns { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .done { text-align:center; padding:40px 20px; }
+  .done .ic { font-size:40px; color:#1D9E75; }
+  .done h2 { font-size:18px; margin:12px 0 6px; }
+  .done p { font-size:14px; color:#5F5E5A; margin:0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><h1>จองสนามฟุตบอล</h1><p id="headSub">เลือกวันและสนามเพื่อดูช่วงเวลาว่าง</p></div>
+
+  <div class="body">
+    <div class="err" id="err"></div>
+
+    <div id="step1">
+      <div class="row2">
+        <div><label>วันที่</label><input type="date" id="date"></div>
+        <div><label>สนาม</label>
+          <select id="field"><option value="1">สนาม 1 (ใหญ่)</option><option value="2">สนาม 2 (เล็ก)</option><option value="3">สนาม 3 (เล็ก)</option></select>
+        </div>
+      </div>
+      <button class="btn" id="checkBtn" style="margin-bottom:14px;">ตรวจสอบช่วงเวลาว่าง</button>
+
+      <div id="gridArea" style="display:none;">
+        <div class="legend">
+          <span><i style="background:#9FE1CB;"></i> ว่าง</span>
+          <span><i style="background:#F7C1C1;"></i> จองแล้ว</span>
+          <span><i style="background:#534AB7;"></i> เลือกอยู่</span>
+        </div>
+        <div class="grid" id="grid"></div>
+        <div class="capnote" id="capNote">เลือกช่วงเวลาต่อเนื่องได้สูงสุด 6 ชั่วโมง<br>ต้องการจองมากกว่านี้เพื่อรับราคาพิเศษ โทร <a href="tel:055218800">055-218800</a></div>
+        <div class="sum"><div class="t" id="sumTop">ยังไม่ได้เลือกช่วงเวลา</div><div class="p" id="sumPrice" style="display:none;"></div></div>
+        <button class="btn" id="toStep2" disabled>จองสนาม</button>
+      </div>
+    </div>
+
+    <div id="step2" style="display:none;">
+      <div class="recap" id="recap"></div>
+      <label>ชื่อผู้จอง</label>
+      <input type="text" id="guestName" placeholder="ชื่อ-นามสกุล">
+      <label>ชื่อทีม (ถ้ามี)</label>
+      <input type="text" id="teamName" placeholder="ชื่อทีมฟุตบอล">
+      <label>เบอร์โทรติดต่อ</label>
+      <input type="tel" id="phone" placeholder="08x-xxx-xxxx" inputmode="tel">
+      <label>หมายเหตุ (ถ้ามี)</label>
+      <textarea id="note" placeholder="เช่น ขอลูกฟุตบอล ขอเสื้อสีต่าง"></textarea>
+      <div class="row2">
+        <button class="btn gray" id="backTo1">ย้อนกลับ</button>
+        <button class="btn" id="toModal">ยืนยันการจอง</button>
+      </div>
+    </div>
+
+    <div id="done" class="done" style="display:none;">
+      <div class="ic">✓</div>
+      <h2>ส่งคำขอจองเรียบร้อย</h2>
+      <p id="doneMsg"></p>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="mh">ตรวจสอบรายละเอียดการจอง</div>
+    <div class="mb">
+      <div class="mrow"><span>สนาม</span><span id="mField"></span></div>
+      <div class="mrow"><span>วันที่</span><span id="mDate"></span></div>
+      <div class="mrow"><span>เวลา</span><span id="mTime"></span></div>
+      <div class="mrow"><span>ผู้จอง</span><span id="mGuest"></span></div>
+      <div class="mrow"><span>ทีม</span><span id="mTeam"></span></div>
+      <div class="mrow"><span>เบอร์โทร</span><span id="mPhone"></span></div>
+      <div class="money">
+        <div class="mrow"><span>ค่าเช่าสนาม</span><span id="mRent"></span></div>
+        <div class="mrow dep"><span>มัดจำ (ชำระตอนนี้)</span><span id="mDep"></span></div>
+        <div class="mrow rem"><span>คงเหลือ (จ่ายวันเล่น)</span><span id="mRem"></span></div>
+      </div>
+      <div class="mbtns">
+        <button class="btn gray" id="editBtn">แก้ไข</button>
+        <button class="btn" id="sendBtn">ส่งข้อมูล</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== ค่าที่ต้องตั้ง ======
+var LIFF_ID = '2010614264-ORX1YbvB';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxlDpvWL9LrGlzup_6DsvDvVB_954NMT2Z-u8nTfI3y7KoiA18JjkORGgy31lX9sAR2/exec';
+
+var OPEN=8, CLOSE=24, MAXH=6;
+var FIELD={ '1':{name:'สนาม 1 (สนามใหญ่)',first:1200,add:1000,dep:400},
+            '2':{name:'สนาม 2 (สนามเล็ก)',first:700,add:600,dep:200},
+            '3':{name:'สนาม 3 (สนามเล็ก)',first:700,add:600,dep:200} };
+var lineUserId='', lineName='';
+var booked={}, selected=[];
+var capTimer=null;
+
+function showCapMsg(){
+  var c=el('capNote'); if(!c) return;
+  c.classList.add('warn');
+  if(capTimer) clearTimeout(capTimer);
+  capTimer=setTimeout(function(){ c.classList.remove('warn'); }, 2500);
+}
+
+function pad(n){ return (n<10?'0':'')+n; }
+function fmt(h){ return pad(h)+':00'; }
+function el(id){ return document.getElementById(id); }
+function showErr(t){ var e=el('err'); e.textContent=t; e.style.display='block'; window.scrollTo(0,0); }
+function hideErr(){ el('err').style.display='none'; }
+
+function initLiff(){
+  if (typeof liff==='undefined' || !LIFF_ID || LIFF_ID.indexOf('ใส่')===0) return;
+  liff.init({ liffId: LIFF_ID }).then(function(){
+    if (liff.isLoggedIn()) liff.getProfile().then(function(p){ lineUserId=p.userId; lineName=p.displayName; });
+  }).catch(function(){});
+}
+initLiff();
+
+function jsonp(url, params, cb){
+  var name='cb_'+Date.now()+Math.floor(Math.random()*1000);
+  var qs=Object.keys(params).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }).join('&');
+  window[name]=function(res){ cb(res); delete window[name]; document.body.removeChild(s); };
+  var s=document.createElement('script'); s.src=url+'?'+qs+'&callback='+name;
+  s.onerror=function(){ cb({ok:false,error:'เชื่อมต่อไม่สำเร็จ'}); };
+  document.body.appendChild(s);
+}
+
+// ---- ขั้น 1: ตรวจสอบช่องว่าง ----
+el('checkBtn').addEventListener('click', function(){
+  hideErr();
+  if (!el('date').value) { showErr('กรุณาเลือกวันที่'); return; }
+  var btn=this; btn.disabled=true; btn.textContent='กำลังตรวจสอบ...';
+  jsonp(GAS_URL, { action:'availability', field:el('field').value, date:el('date').value }, function(res){
+    btn.disabled=false; btn.textContent='ตรวจสอบช่วงเวลาว่าง';
+    if (!res || !res.ok) { showErr((res&&res.error)?res.error:'ตรวจสอบไม่สำเร็จ'); return; }
+    booked={}; (res.booked||[]).forEach(function(h){ booked[h]=1; });
+    selected=[]; buildGrid(); el('gridArea').style.display='block'; paint();
+  });
+});
+el('field').addEventListener('change', function(){ el('gridArea').style.display='none'; selected=[]; });
+el('date').addEventListener('change', function(){ el('gridArea').style.display='none'; selected=[]; });
+
+function buildGrid(){
+  var g=el('grid'); g.innerHTML='';
+  for(var i=0;i<16;i++){
+    var h=OPEN+i;
+    var d=document.createElement('button');
+    d.className='slot'; d.setAttribute('data-h',h); d.textContent=fmt(h)+'-'+fmt(h+1);
+    g.appendChild(d);
+    d.addEventListener('click', function(){ clickSlot(parseInt(this.getAttribute('data-h'),10)); });
+  }
+}
+function clickSlot(h){
+  if (booked[h]) return;
+  if (selected.indexOf(h)>-1) selected=[];
+  else if (selected.length===0) selected=[h];
+  else { var mn=selected[0], mx=selected[selected.length-1];
+    if (h===mn-1 && !booked[h]) {
+      if (selected.length>=MAXH) { showCapMsg(); return; }
+      selected.unshift(h);
+    }
+    else if (h===mx+1 && !booked[h]) {
+      if (selected.length>=MAXH) { showCapMsg(); return; }
+      selected.push(h);
+    }
+    else selected=[h]; }
+  paint();
+}
+function paint(){
+  var btns=el('grid').querySelectorAll('.slot');
+  for(var k=0;k<btns.length;k++){
+    var h=parseInt(btns[k].getAttribute('data-h'),10);
+    btns[k].className='slot '+(booked[h]?'s-book':(selected.indexOf(h)>-1?'s-sel':'s-free'));
+  }
+  var f=FIELD[el('field').value], n=selected.length;
+  if (n===0){ el('sumTop').textContent='ยังไม่ได้เลือกช่วงเวลา'; el('sumPrice').style.display='none'; el('toStep2').disabled=true; return; }
+  var start=selected[0], end=selected[selected.length-1]+1, rent=f.first+(n-1)*f.add;
+  el('sumTop').textContent=fmt(start)+' - '+fmt(end)+' · '+n+' ชม.';
+  el('sumPrice').style.display='block';
+  el('sumPrice').textContent='ค่าเช่าสนาม '+rent.toLocaleString()+' บาท';
+  el('toStep2').disabled=false;
+}
+
+// ---- ขั้น 2: กรอกข้อมูล ----
+el('toStep2').addEventListener('click', function(){
+  var f=FIELD[el('field').value], n=selected.length;
+  var start=selected[0], end=selected[selected.length-1]+1, rent=f.first+(n-1)*f.add;
+  el('recap').innerHTML='<b>'+f.name+'</b><br>'+el('date').value+' · '+fmt(start)+'-'+fmt(end)+' ('+n+' ชม.)<br>ค่าเช่าสนาม '+rent.toLocaleString()+' บาท';
+  el('step1').style.display='none'; el('step2').style.display='block';
+  el('headSub').textContent='กรอกข้อมูลผู้จอง';
+});
+el('backTo1').addEventListener('click', function(){ el('step2').style.display='none'; el('step1').style.display='block'; el('headSub').textContent='เลือกวันและสนามเพื่อดูช่วงเวลาว่าง'; });
+
+// ---- ขั้น 3: popup ยืนยัน ----
+el('toModal').addEventListener('click', function(){
+  hideErr();
+  if (!el('guestName').value.trim()) { showErr('กรุณากรอกชื่อผู้จอง'); return; }
+  if (!el('phone').value.trim())     { showErr('กรุณากรอกเบอร์โทรติดต่อ'); return; }
+  var f=FIELD[el('field').value], n=selected.length;
+  var start=selected[0], end=selected[selected.length-1]+1;
+  var rent=f.first+(n-1)*f.add, dep=f.dep*n, rem=rent-dep;
+  el('mField').textContent=f.name;
+  el('mDate').textContent=el('date').value;
+  el('mTime').textContent=fmt(start)+'-'+fmt(end)+' ('+n+' ชม.)';
+  el('mGuest').textContent=el('guestName').value.trim();
+  el('mTeam').textContent=el('teamName').value.trim()||'-';
+  el('mPhone').textContent=el('phone').value.trim();
+  el('mRent').textContent=rent.toLocaleString()+' บาท';
+  el('mDep').textContent=dep.toLocaleString()+' บาท';
+  el('mRem').textContent=rem.toLocaleString()+' บาท';
+  el('overlay').style.display='flex';
+});
+el('editBtn').addEventListener('click', function(){ el('overlay').style.display='none'; });
+
+el('sendBtn').addEventListener('click', function(){
+  var f=el('field').value, n=selected.length, start=selected[0];
+  var btn=this; btn.disabled=true; btn.textContent='กำลังส่ง...';
+  jsonp(GAS_URL, {
+    action:'submit', field:f, date:el('date').value, startHour:start, hours:n,
+    guestName:el('guestName').value.trim(), teamName:el('teamName').value.trim(),
+    phone:el('phone').value.trim(), note:el('note').value.trim(),
+    userId:lineUserId, lineName:lineName
+  }, function(res){
+    if (res && res.ok){
+      el('overlay').style.display='none'; el('step2').style.display='none';
+      el('done').style.display='block'; el('headSub').textContent='';
+      el('doneMsg').textContent='รหัส '+res.bookingId+' เจ้าหน้าที่จะติดต่อกลับเพื่อยืนยัน';
+      if (typeof liff!=='undefined' && liff.isInClient && liff.isInClient()){
+        liff.sendMessages([{type:'text', text:res.summary}]).then(function(){ setTimeout(function(){ liff.closeWindow(); },1800); }).catch(function(){});
+      }
+    } else {
+      btn.disabled=false; btn.textContent='ส่งข้อมูล';
+      el('overlay').style.display='none';
+      showErr((res&&res.error)?res.error:'ส่งไม่สำเร็จ');
+      if (res && res.error && res.error.indexOf('ถูกจอง')>-1){
+        el('step2').style.display='none'; el('step1').style.display='block';
+        el('checkBtn').click();
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

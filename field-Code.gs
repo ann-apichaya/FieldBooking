@@ -9,10 +9,10 @@
  *************************************************************/
 
 // ====== ค่าที่ต้องตั้ง ======
-var SHEET_ID       = 'ใส่_ID_ของไฟล์_Google_Sheet_ที่นี่';
+var SHEET_ID       = '175bu0IaRFDBW-JiUVbn5pf3dX32foma0jcLoUXG2tzo';
 var SHEET_NAME     = 'FieldBooking';
-var STAFF_PASSWORD = 'pu1234';
-var ADMIN_EMAIL    = '';
+var STAFF_PASSWORD = 'PU@2521';
+var ADMIN_EMAIL    = 'ann.apichaya@gmail.com';
 
 // ตารางราคา/มัดจำ (ระบบยึดค่านี้เป็นหลัก กันราคาปลอมจากฝั่งลูกค้า)
 var FIELD = {
